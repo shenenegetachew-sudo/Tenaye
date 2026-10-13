@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="am">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ጤናዬ (Tenaye) - ዲጂታል የጤና መረጃ እና ትምህርት ፖርታል</title>
+    <style>
+        :root {
+            --primary: #0d9488;
+            --primary-dark: #0f766e;
+            --primary-light: #ccfbf1;
+            --secondary: #f59e0b;
+            --accent: #ef4444;
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --radius: 12px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        /* Dark Mode Theme Variables */
+        .dark-mode {
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --primary-light: #134e4a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* Real App Header */
+        header {
+            background-color: var(--surface);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .app-branding {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .app-logo-icon {
+            background: var(--primary);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 8px;
+            background: var(--bg);
+            padding: 5px;
+            border-radius: 30px;
+            border: 1px solid var(--border);
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text-muted);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        nav a.active, nav a:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        /* Layout Container */
+        .app-body {
+            max-width: 1200px;
+            width: 100%;
+            margin: 20px auto;
+            padding: 0 20px;
+            flex: 1;
+        }
+
+        .page-view {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .page-view.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Search & Filter Controls */
+        .search-box-wrapper {
+            margin-bottom: 25px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 280px;
+            padding: 14px 20px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text-main);
+            font-size: 1rem;
+            outline: none;
+            box-shadow: var(--shadow);
+        }
+
+        .category-filter {
+            padding: 14px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        /* Disease Grid & Detail Cards */
+        .disease-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 20px;
+        }
+
+        .disease-card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.2s;
+        }
+
+        .disease-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .disease-tag {
+            align-self: flex-start;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .tag-infectious { background: #fee2e2; color: #991b1b; }
+        .tag-noninfectious { background: #e0f2fe; color: #075985; }
+
+        .disease-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .disease-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .btn {
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-dark); }
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-main); }
+        .btn-outline:hover { background: var(--bg); }
+        .btn-danger { background: var(--accent); color: white; }
+
+        /* Modal Popup for Complete Disease Details */
+        .modal-overlay {
+            position: fixed;
+            top:0; left:0; right:0; bottom:0;
+            background: rgba(0,0,0,0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-overlay.active { display: flex; }
+
+        .modal-content {
+            background: var(--surface);
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            border-radius: var(--radius);
+            padding: 30px;
+            position: relative;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px; right: 20px;
+            background: var(--bg);
+            border: none;
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: var(--text-muted);
+        }
+
+        .modal-section {
+            margin-top: 18px;
+            padding-top: 14px;
+            border-top: 1px solid var(--border);
+        }
+
+        .modal-section h4 {
+            color: var(--primary);
+            margin-bottom: 6px;
+            font-size: 1.05rem;
+        }
+
+        /* Embedded Custom Health Browser */
+        .browser-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .browser-bar {
+            background: var(--bg);
+            padding: 10px 15px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .browser-bar input {
+            flex: 1;
+            padding: 8px 14px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text-main);
+        }
+
+        .browser-viewport {
+            padding: 25px;
+            min-height: 400px;
+        }
+
+        /* AI Interactive Mini-Games Container */
+        .game-card-container {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 30px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .interactive-canvas {
+            width: 100%;
+            height: 260px;
+            background: var(--bg);
+            border: 2px dashed var(--border);
+            border-radius: var(--radius);
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .score-badge {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--secondary);
+            margin-bottom: 10px;
+        }
+
+        /* Settings & Files */
+        .settings-group {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 20px;
+            border: 1px solid var(--border);
+            margin-bottom: 20px;
+        }
+
+        .settings-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .settings-row:last-child { border-bottom: none; }
+
+        /* Footer */
+        footer {
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- REAL APP HEADER & NAVIGATION -->
+    <header>
+        <div class="header-container">
+            <div class="app-branding">
+                <div class="app-logo-icon">🩺</div>
+                <span>ጤናዬ Portal</span>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#" class="nav-btn active" onclick="switchTab('home')">🏠 መነሻ</a></li>
+                    <li><a href="#" class="nav-btn" onclick="switchTab('diseases')">📚 በሽታዎች (20+)</a></li>
+                    <li><a href="#" class="nav-btn" onclick="switchTab('browser')">🌐 ጤናዬ Browser</a></li>
+                    <li><a href="#" class="nav-btn" onclick="switchTab('saved')">📁 የተቀመጡ (Saved)</a></li>
+                    <li><a href="#" class="nav-btn" onclick="switchTab('games')">🎮 AI Games</a></li>
+                    <li><a href="#" class="nav-btn" onclick="switchTab('settings')">⚙️ Settings</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- MAIN APPLICATION BODY -->
+    <div class="app-body">
+
+        <!-- 1. HOME TAB -->
+        <section id="tab-home" class="page-view active">
+            <div style="background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; padding: 40px; border-radius: var(--radius); margin-bottom: 30px;">
+                <h1 style="font-size: 2.2rem; margin-bottom: 10px;">እንኳን ወደ «ጤናዬ» አፕሊኬሽን በሰላም መጡ!</h1>
+                <p style="font-size: 1.1rem; opacity: 0.9;">ሙሉ የማህበረሰብ የጤና መረጃ፣ ከ20 በላይ የበሽታዎች ጥልቅ ማብራሪያ፣ የጤና ብራውዘር እና በAI የተደገፉ መዝናኛዎች።</p>
+                <div style="margin-top: 20px; display: flex; gap: 10px;">
+                    <button class="btn" style="background: white; color: var(--primary);" onclick="switchTab('diseases')">በሽታዎችን ይመልከቱ</button>
+                    <button class="btn" style="background: var(--secondary); color: white;" onclick="switchTab('games')">አሁኑኑ ይጫወቱ</button>
+                </div>
+            </div>
+
+            <h2 style="margin-bottom: 15px;">ፈጣን አጋዥ ክፍሎች</h2>
+            <div class="disease-grid">
+                <div class="disease-card">
+                    <h3 class="disease-title">🔍 ጤናዬ Search Browser</h3>
+                    <p class="disease-desc">በአፕሊኬሽኑ የራሱ መፈለጊያ የጤና ርዕሶችን በነጻነት ይፈልጉ እና ያንብቡ።</p>
+                    <button class="btn btn-outline" onclick="switchTab('browser')">ወደ Browser ሂድ</button>
+                </div>
+                <div class="disease-card">
+                    <h3 class="disease-title">📁 የተቀመጡ ፋይሎች (Saved)</h3>
+                    <p class="disease-desc">ከመስመር ውጭ (Offline) ለማንበብ ያስቀመጧቸውን የሕክምና ሰነዶች እዚህ ያግኙ።</p>
+                    <button class="btn btn-outline" onclick="switchTab('saved')">የተቀመጡትን ክፈት</button>
+                </div>
+                <div class="disease-card">
+                    <h3 class="disease-title">⚙️ የአፕሊኬሽን ማስተካከያ</h3>
+                    <p class="disease-desc">የቋንቋ፣ የገጽታ (Dark Mode) እና የፅሁፍ መጠን ማስተካከያ።</p>
+                    <button class="btn btn-outline" onclick="switchTab('settings')">ሴቲንግ ይክፈቱ</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. DISEASES DIRECTORY TAB (20+ DISEASES) -->
+        <section id="tab-diseases" class="page-view">
+            <h2 style="margin-bottom: 15px;">የበሽታዎች ዝርዝር እና አጠቃላይ የህክምና መረጃ</h2>
+            
+            <div class="search-box-wrapper">
+                <input type="text" id="diseaseSearch" class="search-input" placeholder="የበሽታ ስም ይፈልጉ (ለምሳሌ፡ ደም ግፊት, ወባ, ቲቢ)..." onkeyup="filterDiseases()">
+                <select id="categoryFilter" class="category-filter" onchange="filterDiseases()">
+                    <option value="ALL">ሁሉንም አይነቶች ማሳያ</option>
+                    <option value="infectious">ተላላፊ በሽታዎች</option>
+                    <option value="noninfectious">ተላላፊ ያልሆኑ በሽታዎች</option>
+                </select>
+            </div>
+
+            <div id="diseaseGrid" class="disease-grid">
+                <!-- Javascript dynamic population -->
+            </div>
+        </section>
+
+        <!-- 3. INDIVIDUAL HEALTH BROWSER TAB -->
+        <section id="tab-browser" class="page-view">
+            <h2 style="margin-bottom: 15px;">🌐 ጤናዬ Search Browser</h2>
+            <p style="color: var(--text-muted); margin-bottom: 15px;">የጤና መረጃዎችን በፍጥነት ለመፈለግ እና ለመቃኘት የተዘጋጀ ገለልተኛ የውስጥ ብራውዘር።</p>
+            
+            <div class="browser-box">
+                <div class="browser-bar">
+                    <button class="btn btn-outline" onclick="browserHome()">🏠 Home</button>
+                    <input type="text" id="browserUrl" value="tenaye://health-database/search">
+                    <button class="btn btn-primary" onclick="executeBrowserSearch()">Go</button>
+                </div>
+                <div class="browser-viewport" id="browserBody">
+                    <h3>እንኳን ወደ ጤናዬ ብራውዘር በሰላም መጡ!</h3>
+                    <p style="margin-top: 10px; color: var(--text-muted);">በእኛ የመረጃ ቋት ውስጥ ያሉትን ማንኛውንም የጤና ርዕሶች በፍለጋ ሳጥኑ በመጠቀም መፈለግ ይችላሉ።</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. SAVED FILES TAB -->
+        <section id="tab-saved" class="page-view">
+            <h2 style="margin-bottom: 15px;">📁 የተቀመጡ የሕክምና ሰነዶች (Offline Storage)</h2>
+            <p style="color: var(--text-muted); margin-bottom: 15px;">ኢንተርኔት በሌለበት ሰዓት ለማንበብ ያስቀመጧቸው የበሽታዎች መረጃዎች።</p>
+            <div id="savedListContainer" class="disease-grid">
+                <!-- Dynamic Content -->
+            </div>
+        </section>
+
+        <!-- 5. AI CREATING INTERACTIVE GAMES TAB -->
+        <section id="tab-games" class="page-view">
+            <h2 style="margin-bottom: 10px; text-align: center;">🎮 በAI የተደገፉ የህክምና መዝናኛ ጨዋታዎች</h2>
+            <p style="text-align: center; color: var(--text-muted); margin-bottom: 25px;">ከጥያቄዎች ውጭ በድርጊት እና በእይታ ላይ የተመሰረቱ የማህበረሰብ መዝናኛዎች!</p>
+
+            <!-- GAME 1: VIRUS DEFENDER (AI SIMULATOR) -->
+            <div class="game-card-container">
+                <h3>ጨዋታ 1፦ «ቫይረስ ተከላካይ» (Immune System Defender)</h3>
+                <p style="color: var(--text-muted); font-size: 0.9rem;">በስክሪኑ ላይ የሚመጡትን በሽታ አምጪ ተህዋስያን (Viruses) በጣትዎ/በማውስ በመንካት የነጭ የደም ሴሎችን ይረዱ!</p>
+                
+                <div class="score-badge">ነጥብ፦ <span id="game1Score">0</span></div>
+                
+                <div id="gameCanvas" class="interactive-canvas">
+                    <p id="gameStartMsg" style="color: var(--text-muted);">«ጀምር» የሚለውን ተጫኑ</p>
+                </div>
+
+                <button class="btn btn-primary" onclick="startGame1()">ጨዋታውን ጀምር</button>
+                <button class="btn btn-danger" onclick="stopGame1()">አቁም</button>
+            </div>
+        </section>
+
+        <!-- 6. APPLICATION SETTINGS TAB -->
+        <section id="tab-settings" class="page-view">
+            <h2 style="margin-bottom: 15px;">⚙️ የአፕሊኬሽን ማስተካከያዎች (Application Settings)</h2>
+            
+            <div class="settings-group">
+                <h3>የገጽታ እና የዕይታ ማስተካከያ</h3>
+                <div class="settings-row">
+                    <span>የጨለማ ሁነታ (Dark Mode)</span>
+                    <input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode()">
+                </div>
+                <div class="settings-row">
+                    <span>የፅሁፍ መጠን (Font Size)</span>
+                    <select class="category-filter" onchange="changeFontSize(this.value)">
+                        <option value="16px">መካከለኛ (Normal)</option>
+                        <option value="18px">ትልቅ (Large)</option>
+                        <option value="20px">በጣም ትልቅ (Extra Large)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <h3>ቋንቋ እና ክልላዊ ሁኔታዎች</h3>
+                <div class="settings-row">
+                    <span>የአፕሊኬሽን ቋንቋ</span>
+                    <select class="category-filter">
+                        <option value="am">አማርኛ (Amharic)</option>
+                        <option value="om">Afaan Oromoo</option>
+                        <option value="ti">ትግርኛ</option>
+                        <option value="en">English</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <h3>የአፕሊኬሽን መረጃ እና ህግ</h3>
+                <div class="settings-row">
+                    <span>የሶፍትዌር ሥሪት (Version)</span>
+                    <strong>v2.4.0 (2026 Edition)</strong>
+                </div>
+                <div class="settings-row">
+                    <span>የህክምና ህግ ማስታወቂያ (Medical Disclaimer)</span>
+                    <button class="btn btn-outline" onclick="alert('ማስታወቂያ፦ ይህ አፕሊኬሽን ለትምህርትና ለግንዛቤ ብቻ የተዘጋጀ ሲሆን የዶክተርን ምክር አይተካም።')">እይ</button>
+                </div>
+                <div class="settings-row">
+                    <span>ከአፕሊኬሽኑ ውጣ (Exit App)</span>
+                    <button class="btn btn-danger" onclick="exitApp()">መውጫ (Exit)</button>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- COMPLETE DISEASE DETAIL MODAL POPUP -->
+    <div id="diseaseModal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">✕</button>
+            <span id="mTag" class="disease-tag">ትራንስሚሽን</span>
+            <h2 id="mTitle" style="color: var(--primary); margin-top: 5px;">የበሽታው ስም</h2>
+            
+            <div class="modal-section">
+                <h4>📌 የበሽታው ትርጉም እና መግለጫ</h4>
+                <p id="mDesc"></p>
+            </div>
+            <div class="modal-section">
+                <h4>🦠 እንዴት መጣ? (መንስኤዎች)</h4>
+                <p id="mCause"></p>
+            </div>
+            <div class="modal-section">
+                <h4>🔄 ከሰው ወደ ሰው እንዴት ይተላለፋል? (Transmission)</h4>
+                <p id="mTransmission"></p>
+            </div>
+            <div class="modal-section">
+                <h4>⚠️ ዋና ዋና ምልክቶች (Symptoms)</h4>
+                <p id="mSymptoms"></p>
+            </div>
+            <div class="modal-section">
+                <h4>🛡️ መከላከያ መንገዶች (Prevention)</h4>
+                <p id="mPrevention"></p>
+            </div>
+            <div class="modal-section">
+                <h4>🏥 የህክምና ማናጅመንት እና እንክብካቤ (Management)</h4>
+                <p id="mManagement"></p>
+            </div>
+
+            <div style="margin-top: 20px; display: flex; gap: 10px;">
+                <button id="mSaveBtn" class="btn btn-primary" onclick="">ለበኋላ አስቀምጥ (Save File)</button>
+                <button class="btn btn-outline" onclick="closeModal()">ዝጋ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>&copy; 2026 «ጤናዬ» Digital Health Application | የተዘጋጀው ለማህበረሰብ የጤና ግንዛቤ ነው</p>
+    </footer>
+
+    <!-- JAVASCRIPT DATABASE & LOGIC -->
+    <script>
+        // --- 20+ COMPLETE HEALTH DATABASE ---
+        const diseasesData = [
+            {
+                id: "d1",
+                name: "የደም ግፊት (Hypertension)",
+                category: "noninfectious",
+                desc: "የደም ግፊት ማለት ደም በደም ስሮች ውስጥ ሲያልፍ በስሮቹ ግድግዳ ላይ የሚያሳድረው ግፊት ከተለመደው መጠን በላይ መጨመር ነው።",
+                cause: "የጨው አጠቃቀም ማብዛት፣ የአካል ብቃት እንቅስቃሴ አለማድረግ፣ የሰውነት ክብደት መጨመር፣ ውጥረት እና የዘር ሀረግ።",
+                transmission: "ተላላፊ አይደለም (ከሰው ወደ ሰው አይተላለፍም)።",
+                symptoms: "ኃይለኛ ራስ ምታት፣ የማዞር ስሜት፣ የልብ ምት መጨመር፣ የዕይታ መደብዘዝ እና የደረት ህመም።",
+                prevention: "የጨው አጠቃቀምን መቀነስ፣ አትክልትና ፍራፍሬ ማብዛት፣ አፕል/የሰውነት እንቅስቃሴ ማድረግ፣ ሲጋራና አልኮል ማቆም።",
+                management: "በሀኪም የሚታዘዙ የደም ግፊት ማወረጃ መድኃኒቶችን በአግባቡ መውሰድ እና ዘወትር ግፊትን መለካት።"
+            },
+            {
+                id: "d2",
+                name: "ወባ (Malaria)",
+                category: "infectious",
+                desc: "ወባ በፕላስሞዲየም በተባለ ጥገኛ ተህዋሲ የሚመጣ እና የደም ሴሎችን የሚያጠቃ አጣዳፊ በሽታ ነው።",
+                cause: "በፕላስሞዲየም ጥገኛ ተህዋሲያን አማካይነት።",
+                transmission: "ሴት የአኖፊሊስ ትንኝ ሰውን ስትነክስ አስተላላፊ በመሆን ታስተላልፋለች። በቀጥታ ከሰው ወደ ሰው አይተላለፍም።",
+                symptoms: "ከፍተኛ ትኩሳት፣ ማንቀጥቀጥ፣ ራስ ምታት፣ ማስመለስ፣ የጡንቻ ህመም እና ድካም።",
+                prevention: "የተቋጠረ ውሃ ማጽዳት፣ አጉል አጋጣሚዎች ላይ የአልጋ መረብ (አሙል) መጠቀም፣ ፀረ-ትንኝ ኬሚካል መርጨት።",
+                management: "በቅድመ ምርመራ የደም ምርመራ ማድረግ እና የፀረ-ወባ መድኃኒቶችን (Coartem) ሙሉ ኮርስ መውሰድ።"
+            },
+            {
+                id: "d3",
+                name: "የቲቢ በሽታ (Tuberculosis - TB)",
+                category: "infectious",
+                desc: "ቲቢ በባክቴሪያ የሚመጣና በአብዛኛው ሳንባን የሚያጠቃ ሥር የሰደደ ተላላፊ በሽታ ነው።",
+                cause: "ማይኮባክቴሪየም ቲዩበርክሎሲስ በተባለ ባክቴሪያ ምክንያት።",
+                transmission: "በአየር ወለድ፦ የቲቢ ታካሚ ሲስል፣ ሲያነጥስ ወይም ሲናገር በነጠብጣብ አማካይነት ወደ ሌላ ሰው ይተላለፋል።",
+                symptoms: "ከ2 ሳምንት በላይ የቆየ ሳል፣ የምሽት ወይዛት/ላብ፣ የክብደት መቀነስ፣ የምግብ ፍላጎት ማጣት እና የደረት ህመም።",
+                prevention: "የBCG ክትባት ለህፃናት መስጠት፣ በቂ አየር ዝውውር እንዲኖር ማድረግ፣ በሳል ጊዜ አፍና አፍንጫን መሸፈን።",
+                management: "የቲቢ መድኃኒቶችን (Directly Observed Therapy - DOTS) ለ6 ወራት ያለመቋረጥ መውሰድ።"
+            },
+            {
+                id: "d4",
+                name: "የስኳር በሽታ (Diabetes Mellitus)",
+                category: "noninfectious",
+                desc: "የስኳር በሽታ የሰውነታችን የኢንሱሊን ሆርሞን ማመርት አለመቻል ወይም በአግባቡ አለመጠቀም ሲያጋጥም የሚፈጠር ነው።",
+                cause: "የጣፊያ አካል ኢንሱሊን ማቆም (Type 1) ወይም የሰውነት ሴሎች ለኢንሱሊን ምላሽ አለመስጠት (Type 2)።",
+                transmission: "ተላላፊ አይደለም።",
+                symptoms: "ከመጠን ያለፈ ጥም፣ በঘনፈት ሽንት መምጣት፣ የረሃብ ስሜት፣ የክብደት መቀነስ እና የቁስል ቶሎ አለመዳን።",
+                prevention: "የስኳር እና የካርቦሃይድሬት መጠን መቀነስ፣ ክብደትን ማስተካከል።",
+                management: "የኢንሱሊን ኢንጄክሽን ወይም የስኳር ኒውትራላይዘር ኪኒኖችን መውሰድ፣ የደም ስኳር መጠንን መከታተል።"
+            },
+            {
+                id: "d5",
+                name: "ኤች.አይ.ቪ/ኤድስ (HIV/AIDS)",
+                category: "infectious",
+                desc: "የሰውነትን የበሽታ መከላከል አቅም የሚያዳክም ቫይረስ ነው።",
+                cause: "Human Immunodeficiency Virus (HIV)።",
+                transmission: "በደህንነቱ ያልተጠበቀ የጾታ ግንኙነት፣ በበከለ ስለታም እቃዎች እና በእናት ወደ ልጅ በእርግዝና/ወተት ወቅት።",
+                symptoms: "የክብደት በፍጥነት መቀነስ፣ ተደጋገሚ ትኩሳት፣ ረጅም ጊዜ የሚቆይ ተቅማጥ እና እብጠት።",
+                prevention: "ታማኝ መሆን፣ ኮንዶም መጠቀም፣ ስለታም እቃዎችን አለማጋራት።",
+                management: "የፀረ-ቫይረስ መድኃኒቶችን (ART) እድሜ ልክ በአግባቡ መከታተል።"
+            },
+            {
+                id: "d6",
+                name: "የጨጓራ ቁስለት (Peptic Ulcer Disease)",
+                category: "noninfectious",
+                desc: "የጨጓራ ወይም የትንሹ አንጀት የላይኛው ሽፋን መቁሰል ወይም መሸርሸር።",
+                cause: "H. Pylori ባክቴሪያ፣ የህመም ማስታገሻዎችን (NSAIDs) ማብዛት፣ ጨዋማ እና ቃሪያ የበዛባቸው ምግቦች።",
+                transmission: "ኤች.ፓይሎሪ ባክቴሪያ በቆሸሸ ምግብና ውሃ ሊተላለፍ ይችላል።",
+                symptoms: "የሆድ የላይኛው ክፍል ማቃጠል፣ ማስታወክ፣ የረሃብ ስሜት ሲመጣ የህመም መጨመር።",
+                prevention: "ንፁህ ምግብና ውሃ መጠቀም፣ የህመም ማስታገሻዎችን ያለ ሀኪም ትእዛዝ አለመውሰድ።",
+                management: "የጨጓራ አሲድ የሚቀንሱ (PPIs) እና የባክቴሪያ ማጥፊያ መድኃኒቶችን መውሰድ።"
+            },
+            {
+                id: "d7",
+                name: "ኮሌራ (Cholera)",
+                category: "infectious",
+                desc: "በከፍተኛ ተቅማጥ እና ማስታወክ ምክንያት ፈጣን የሰውነት ድርቀትን የሚያስከትል አጣዳፊ በሽታ።",
+                cause: "ቪብሪዮ ኮሌሬ (Vibrio cholerae) ባክቴሪያ።",
+                transmission: "በባክቴሪያው የተበከለ ውሃ ወይም ምግብ በመመገብ።",
+                symptoms: "ውሃ መሰል ተቅማጥ (የሩዝ ውሃ የሚመስል)፣ ፈጣን ማስታወክ፣ የጡንቻ ቁርጠት።",
+                prevention: "ውሃ አፍልቶ/በክሎሪን አክሞ መጠጣት፣ እጅን በሳሙና መታጠብ፣ አትክልቶችን በጥንቃቄ ማጠብ።",
+                management: "የኦ.አር.ኤስ (ORS) የጨው እና ስኳር መፍትሄ ፈጣን መስጠት እና ወደ ህክምና መውሰድ።"
+            },
+            {
+                id: "d8",
+                name: "ኮቪድ-19 (COVID-19)",
+                category: "infectious",
+                desc: "በኮሮና ቫይረስ የሚመጣ የመተንፈሻ አካላት ህመም ነው።",
+                cause: "SARS-CoV-2 ቫይረስ።",
+                transmission: "በአየር ወለድ እና በበከሉ እቃዎች ንክኪ።",
+                symptoms: "ሳል፣ ትኩሳት፣ የሽታና ጣዕም ስሜት ማጣት፣ የመተንፈስ ችግር።",
+                prevention: "ክትባት መውሰድ፣ ማስክ ማድረግ፣ እጅን መታጠብ።",
+                management: "እረፍት ማድረግ፣ ፈሳሽ ማብዛት፣ ከባድ አየር እጥረት ካለ ኦክስጅን ህክምና።"
+            },
+            {
+                id: "d9",
+                name: "የአስም ህመም (Asthma)",
+                category: "noninfectious",
+                desc: "የአየር ማስተላለፊያ ቱቦዎች ማበጥ እና መጥበብ የሚፈጥረው የመተንፈስ ችግር።",
+                cause: "የአለርጂ ሁኔታዎች (አቧራ፣ የቤት እንስሳት ፀጉር፣ ቅዝቃዜ)።",
+                transmission: "ተላላፊ አይደለም።",
+                symptoms: "የማፊጨት ድምፅ በመተንፈስ ጊዜ፣ ሳል፣ የደረት ውጥረት።",
+                prevention: "አለርጂ ቀስቃሽ ነገሮችን ማስወገድ።",
+                management: "የአስም ማنشራፊያ ኢንሄለር (Inhalers/Salbutamol) መጠቀም።"
+            },
+            {
+                id: "d10",
+                name: "ታይፎይድ (Typhoid Fever)",
+                category: "infectious",
+                desc: "በአንጀት እና በደም ውስጥ የሚሰራጭ የባክቴሪያ ህመም።",
+                cause: "ሳልሞኔላ ታይፊ (Salmonella Typhi) ባክቴሪያ።",
+                transmission: "በበከለ ምግብ እና ውሃ።",
+                symptoms: "ከፍተኛ ትኩሳት፣ የሆድ ህመም፣ ድካም፣ የሆድ ድርቀት ወይም ተቅማጥ።",
+                prevention: "የግልና የአካባቢ ንፅህናን መጠበቅ።",
+                management: "በሀኪም የታዘዘ አንቲባዮቲክ መውሰድ።"
+            },
+            {
+                id: "d11",
+                name: "ታይፈስ (Typhus)",
+                category: "infectious",
+                desc: "በቅንጣቢ፣ በቁማል ወይም በቁንጫ ንክሻ የሚተላለፍ የባክቴሪያ ህመም።",
+                cause: "ሪኬትሲያ (Rickettsia) ባክቴሪያ።",
+                transmission: "የሰውነት ቁማል ወይም የቁንጫ ንክሻ።",
+                symptoms: "ኃይለኛ ትኩሳት፣ ራስ ምታት፣ በሰውነት ላይ የሚወጡ ቀይ ነጠብጣቦች።",
+                prevention: "የልብስ እና የሰውነት ንፅህናን መጠበቅ፣ ቁማልን ማጥፋት።",
+                management: "አንቲባዮቲክ ህክምና (Doxycycline)።"
+            },
+            {
+                id: "d12",
+                name: "የጉበት በሽታ አጣዳፊ/ሄፓታይቲስ B (Hepatitis B)",
+                category: "infectious",
+                desc: "ጉበትን የሚያጠቃ እና ለካንሰር ሊዳርግ የሚችል የቫይረስ ህመም።",
+                cause: "Hepatitis B Virus (HBV)።",
+                transmission: "በደም ንክኪ፣ ደህንነቱ ያልተጠበቀ የጾታ ግንኙነት፣ ከእናት ወደ ልጅ።",
+                symptoms: "የአይንና የቆዳ ቢጫ መሆን (Jaundice)፣ የሆድ ህመም፣ ጥቁር ሽንት።",
+                prevention: "የሄፓታይቲስ B ክትባት መውሰድ።",
+                management: "የፀረ-ቫይረስ መድኃኒቶች እና የጉበት እንክብካቤ።"
+            },
+            {
+                id: "d13",
+                name: "የሳንባ ምች (Pneumonia)",
+                category: "infectious",
+                desc: "የሳንባ አየር ከረጢቶች በፈሳሽ ወይም በፑስ የመሙላት ህመም።",
+                cause: "ባክቴሪያ፣ ቫይረስ ወይም ፈንገስ።",
+                transmission: "በአየር ወለድ ወይም በሳል ነጠብጣብ።",
+                symptoms: "ከባድ ሳል ከክታ ጋር፣ ትኩሳት፣ የደረት ህመም፣ የመተንፈስ ፍጥነት መጨመር።",
+                prevention: "ክትባቶችን መውሰድ (PCV)፣ ህፃናትን ከቅዝቃዜ መጠበቅ።",
+                management: "አንቲባዮቲክስ እና ኦክስጅን ድጋፍ።"
+            },
+            {
+                id: "d14",
+                name: "የአንጀት ጥገኛ ትሎች (Intestinal Worms)",
+                category: "infectious",
+                desc: "በአንጀት ውስጥ የሚኖሩ ጥገኛ ትሎች (አስካሪስ፣ አሜባ ወዘተ)።",
+                cause: "የትል እንቁላሎች ባሉበት አፈር ወይም ምግብ።",
+                transmission: "በበከለ አፈር ያልተታጠበ እጅ ወይም ምግብ።",
+                symptoms: "የሆድ ቁርጠት፣ የደም ማነስ፣ የህፃናት እድገት መቀጨጭ።",
+                prevention: "እጅን መታጠብ፣ ጫማ ማድረግ፣ አትክልቶችን ማጠብ።",
+                management: "የስምጥ/የትል ማጥፊያ ኪኒኖችን (Albendazole) መውሰድ።"
+            },
+            {
+                id: "d15",
+                name: "የኩላሊት ጠጠር (Kidney Stones)",
+                category: "noninfectious",
+                desc: "በኩላሊት ውስጥ የሚፈጠሩ የጠጠሩ ማዕድናት ክምችት።",
+                cause: "በቂ ውሃ አለመጠጣት፣ የጨው እና ፕሮቲን በዝዛ።",
+                transmission: "ተላላፊ አይደለም።",
+                symptoms: "ኃይለኛ የጎን ህመም፣ በሽንት ጊዜ ማቃጠል፣ ደም የተቀላቀለበት ሽንት።",
+                prevention: "በቀን በቂ ውሃ መጠጣት (2-3 ሊትር)።",
+                management: "ውሃ ማብዛት፣ የህመም ማስታገሻ እና በሚያስፈልግበት ጊዜ ኦፕሬሽን።"
+            },
+            {
+                id: "d16",
+                name: "የደም ማነስ (Anemia)",
+                category: "noninfectious",
+                desc: "በደም ውስጥ የሂሞግሎቢን ወይም የቀይ ደም ሴሎች መጠን መቀነስ።",
+                cause: "የአይረን (Iron) ማዕድን እጥረት፣ ከፍተኛ ደም መፍሰስ።",
+                transmission: "ተላላፊ አይደለም።",
+                symptoms: "የከንፈርና የጥፍር መንጣት፣ ፈጣን ድካም፣ የማዞር ስሜት።",
+                prevention: "አይረን የበዛባቸውን ምግቦች (ቆስጣ፣ ስጋ፣ እንቁላል) መመገብ።",
+                management: "የአይረን ኪኒኖችን (Iron supplements) መውሰድ።"
+            },
+            {
+                id: "d17",
+                name: "ሜኒንጃይቲስ (Meningitis)",
+                category: "infectious",
+                desc: "የአንጎል እና የህብረ-ሰረሰር ሽፋኖች ማበጥ።",
+                cause: "ባክቴሪያ ወይም ቫይረስ።",
+                transmission: "በአየር ወለድና በመተንፈሻ አካላት ፈሳሽ።",
+                symptoms: "ከፍተኛ ትኩሳት፣ የአንገት መገተር፣ ለብርሃን ስሜታዊ መሆን።",
+                prevention: "የሜኒንጃይቲስ ክትባት መውሰድ።",
+                management: "አስቸኳይ የአንቲባዮቲክስ ህክምና በሆስፒታል::"
+            },
+            {
+                id: "d18",
+                name: "የአእምሮ ጨናነቅ/ድብርት (Depression)",
+                category: "noninfectious",
+                desc: "የስሜት እና የአስተሳሰብ መጎዳት የሚያስከትል የአእምሮ ጤና ህመም።",
+                cause: "የአእምሮ ኬሚካሎች መዛባት፣ ከፍተኛ ጭንቀት፣ የስነ-ልቦና ጉዳት።",
+                transmission: "ተላላፊ አይደለም።",
+                symptoms: "የረጅም ጊዜ ሀዘን፣ ፍላጎት ማጣት፣ የእንቅልፍ መዛባት፣ የድካም ስሜት።",
+                prevention: "ማህበራዊ ግንኙነት፣ የአካል እንቅስቃሴ፣ ውጥረትን ማስተዳደር።",
+                management: "የስነ-ልቦና ምክር (Counseling) እና የመንፈስ ማረጋጊያ ህክምና።"
+            },
+            {
+                id: "d19",
+                name: "የደረት ህመም/የልብ ህመም (Coronary Artery Disease)",
+                category: "noninfectious",
+                desc: "ወደ ልብ የሚሄዱ ደም ስሮች በስብ በመዘጋታቸው የሚመጣ ህመም።",
+                cause: "ከፍተኛ ኮሌስትሮል፣ ማጨስ፣ ደም ግፊት።",
+                transmission: "ተላላፊ አይደለም።",
+                symptoms: "በደረት ላይ የሚሰማ የክብደት/የጭነት ህመም ወደ እጅ የሚያንጸባርቅ።",
+                prevention: "ስብ የሌላቸው ምግቦች መመገብ፣ ስፖርት መስራት።",
+                management: "የልብ ህክምና መድኃኒቶች እና የቀዶ ጥገና ህክምና።"
+            },
+            {
+                id: "d20",
+                name: "የቆዳ ፈንገስ (Fungal Skin Infection)",
+                category: "infectious",
+                desc: "በቆዳ ላይ የሚፈጠር የፈንገስ አብቦት።",
+                cause: "የቆዳ ፈንገሶች በርጥበት ማደግ።",
+                transmission: "የሌላ ሰውን ልብስ፣ ፎጣ ወይም ማ梳 በማጋራት።",
+                symptoms: "የቆዳ ማከክ፣ መቅላት፣ የቆዳ መላጥ።",
+                prevention: "የግል ልብስ አለማጋራት፣ ቆዳን ደረቅ ማድረግ።",
+                management: "የፀረ-ፈንገስ ቅባቶችን (Clotrimazole) መጠቀም።"
+            }
+        ];
+
+        // --- APP INITIALIZATION & NAVIGATION ---
+        let savedDiseases = [];
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.page-view').forEach(view => view.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        // --- RENDER DISEASES ---
+        function renderDiseases(data) {
+            const grid = document.getElementById('diseaseGrid');
+            grid.innerHTML = "";
+
+            data.forEach(d => {
+                const tagClass = d.category === 'infectious' ? 'tag-infectious' : 'tag-noninfectious';
+                const tagLabel = d.category === 'infectious' ? 'ተላላፊ በሽታ' : 'ተላላፊ ያልሆነ';
+
+                const card = document.createElement('div');
+                card.className = 'disease-card';
+                card.innerHTML = `
+                    <div>
+                        <span class="disease-tag ${tagClass}">${tagLabel}</span>
+                        <h3 class="disease-title">${d.name}</h3>
+                        <p class="disease-desc">${d.desc.substring(0, 90)}...</p>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="openModal('${d.id}')">ሙሉ መረጃ</button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function filterDiseases() {
+            const query = document.getElementById('diseaseSearch').value.toLowerCase();
+            const category = document.getElementById('categoryFilter').value;
+
+            const filtered = diseasesData.filter(d => {
+                const matchesSearch = d.name.toLowerCase().includes(query) || d.desc.toLowerCase().includes(query);
+                const matchesCategory = category === 'ALL' || d.category === category;
+                return matchesSearch && matchesCategory;
+            });
+
+            renderDiseases(filtered);
+        }
+
+        // --- MODAL DETAILED VIEW ---
+        function openModal(id) {
+            const d = diseasesData.find(item => item.id === id);
+            if (!d) return;
+
+            document.getElementById('mTitle').innerText = d.name;
+            document.getElementById('mDesc').innerText = d.desc;
+            document.getElementById('mCause').innerText = d.cause;
+            document.getElementById('mTransmission').innerText = d.transmission;
+            document.getElementById('mSymptoms').innerText = d.symptoms;
+            document.getElementById('mPrevention').innerText = d.prevention;
+            document.getElementById('mManagement').innerText = d.management;
+
+            const tagLabel = d.category === 'infectious' ? 'ተላላፊ በሽታ' : 'ተላላፊ ያልሆነ';
+            document.getElementById('mTag').innerText = tagLabel;
+
+            const saveBtn = document.getElementById('mSaveBtn');
+            saveBtn.onclick = function() { saveFile(d); };
+
+            document.getElementById('diseaseModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('diseaseModal').classList.remove('active');
+        }
+
+        // --- SAVE FILE (OFFLINE STORAGE) ---
+        function saveFile(diseaseObj) {
+            if (!savedDiseases.some(item => item.id === diseaseObj.id)) {
+                savedDiseases.push(diseaseObj);
+                renderSavedFiles();
+                alert(`«${diseaseObj.name}» በፋይል ማከማቻዎ ውስጥ ተቀምጧል!`);
+            } else {
+                alert('ይህ ፋይል ቀደም ሲል ተቀምጧል!');
+            }
+        }
+
+        function renderSavedFiles() {
+            const container = document.getElementById('savedListContainer');
+            container.innerHTML = "";
+
+            if (savedDiseases.length === 0) {
+                container.innerHTML = "<p style='color: var(--text-muted);'>ምንም የተቀመጠ ፋይል የለም።</p>";
+                return;
+            }
+
+            savedDiseases.forEach(d => {
+                const card = document.createElement('div');
+                card.className = 'disease-card';
+                card.innerHTML = `
+                    <h3>${d.name}</h3>
+                    <p class="disease-desc">${d.desc.substring(0, 80)}...</p>
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="openModal('${d.id}')">ክፈት</button>
+                        <button class="btn btn-danger" onclick="removeSaved('${d.id}')">ሰርዝ</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function removeSaved(id) {
+            savedDiseases = savedDiseases.filter(item => item.id !== id);
+            renderSavedFiles();
+        }
+
+        // --- HEALTH BROWSER LOGIC ---
+        function executeBrowserSearch() {
+            const query = document.getElementById('browserUrl').value.toLowerCase();
+            const body = document.getElementById('browserBody');
+
+            const results = diseasesData.filter(d => d.name.toLowerCase().includes(query) || d.desc.toLowerCase().includes(query));
+
+            if (results.length > 0) {
+                let html = `<h3>የፍለጋ ውጤቶች (${results.length})</h3><br>`;
+                results.forEach(r => {
+                    html += `<div style="margin-bottom: 15px; padding: 10px; border-bottom: 1px solid var(--border);">
+                        <h4 style="color: var(--primary);">${r.name}</h4>
+                        <p>${r.desc}</p>
+                    </div>`;
+                });
+                body.innerHTML = html;
+            } else {
+                body.innerHTML = `<h3>ምንም ውጤት አልተገኘም</h3><p style="color: var(--text-muted);">እባክዎን ሌላ የህክምና ቃል ይፈልጉ።</p>`;
+            }
+        }
+
+        function browserHome() {
+            document.getElementById('browserUrl').value = "tenaye://health-database/search";
+            document.getElementById('browserBody').innerHTML = `
+                <h3>እንኳን ወደ ጤናዬ ብራውዘር በሰላም መጡ!</h3>
+                <p style="margin-top: 10px; color: var(--text-muted);">በእኛ የመረጃ ቋት ውስጥ ያሉትን ማንኛውንም የጤና ርዕሶች በፍለጋ ሳጥኑ በመጠቀም መፈለግ ይችላሉ።</p>
+            `;
+        }
+
+        // --- AI CREATING GAME 1: VIRUS DEFENDER ---
+        let game1Interval;
+        let score = 0;
+
+        function startGame1() {
+            const canvas = document.getElementById('gameCanvas');
+            canvas.innerHTML = "";
+            score = 0;
+            document.getElementById('game1Score').innerText = score;
+
+            clearInterval(game1Interval);
+            game1Interval = setInterval(spawnVirus, 900);
+        }
+
+        function spawnVirus() {
+            const canvas = document.getElementById('gameCanvas');
+            const virus = document.createElement('div');
+            
+            virus.innerText = "🦠";
+            virus.style.position = "absolute";
+            virus.style.fontSize = "2rem";
+            virus.style.cursor = "pointer";
+            virus.style.left = Math.random() * (canvas.clientWidth - 40) + "px";
+            virus.style.top = Math.random() * (canvas.clientHeight - 40) + "px";
+
+            virus.onclick = function() {
+                score += 10;
+                document.getElementById('game1Score').innerText = score;
+                virus.remove();
+            };
+
+            canvas.appendChild(virus);
+
+            setTimeout(() => {
+                if (canvas.contains(virus)) virus.remove();
+            }, 1800);
+        }
+
+        function stopGame1() {
+            clearInterval(game1Interval);
+            document.getElementById('gameCanvas').innerHTML = `<p style="color: var(--text-muted);">ጨዋታው ተቋርጧል! ያገኙት ነጥብ፦ ${score}</p>`;
+        }
+
+        // --- SETTINGS LOGIC ---
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+        }
+
+        function changeFontSize(size) {
+            document.body.style.fontSize = size;
+        }
+
+        function exitApp() {
+            if (confirm("ከ«ጤናዬ» አፕሊኬሽን መውጣት ይፈልጋሉ?")) {
+                document.body.innerHTML = "<div style='text-align: center; margin-top: 100px;'><h2>አፕሊኬሽኑ ተዘግቷል። እናመሰግናለን!</h2></div>";
+            }
+        }
+
+        // INITIAL LOAD
+        renderDiseases(diseasesData);
+        renderSavedFiles();
+    </script>
+</body>
+</html>
